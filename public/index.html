@@ -72,7 +72,31 @@
         }
       }
 
-      startButton.addEventListener("click", startClick);
+      document.addEventListener("DOMContentLoaded", function () {
+        let audioUnlocked = false;
+
+        startButton.addEventListener("click", function () {
+          if (!audioUnlocked) {
+            // Versuche, eine leere Wiedergabe zu starten, um das Audio-Element zu "entsperren"
+            clickSound
+              .play()
+              .then(() => {
+                clickSound.pause();
+                clickSound.currentTime = 0;
+                audioUnlocked = true;
+              })
+              .catch((error) => {
+                console.error("Audio konnte nicht entsperrt werden", error);
+              });
+          }
+
+          // Starte das Metronom, wenn das Audio entsperrt ist
+          if (!isPlaying && audioUnlocked) {
+            startClick();
+          }
+        });
+      });
+
       stopButton.addEventListener("click", stopMetronome);
 
       const bpmButtons = document.querySelectorAll(".bpmButton");
