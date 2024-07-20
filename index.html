@@ -26,6 +26,9 @@
         <button class="bpmButton" data="300">300</button>
         <button class="bpmButton" data="360">360</button>
       </div>
+      <div class="button-row">
+        <div id="visualizer" style="width: 100%; min-height: 50px"></div>
+      </div>
     </div>
 
     <audio id="clickSound" src="sh1.mp3"></audio>
@@ -45,6 +48,7 @@
         bpm = parseInt(bpmInput.value, 10);
         startMetronome(bpm);
       }
+
       function startMetronome(desiredBpm) {
         if (isPlaying || !desiredBpm) return;
         console.log("desiredBpm", desiredBpm);
@@ -60,6 +64,21 @@
         intervalId = setInterval(() => {
           clickSound.currentTime = 0;
           clickSound.play();
+
+          // Visualisierung hinzufügen
+          const visualizer = document.getElementById("visualizer");
+          const beatDiv = document.createElement("div");
+          beatDiv.style.width = "10px";
+          beatDiv.style.height = "30px";
+          beatDiv.style.backgroundColor = "green";
+          beatDiv.style.margin = "1px";
+          beatDiv.style.display = "inline-block";
+          visualizer.appendChild(beatDiv);
+
+          // Entferne das div nach einer halben Sekunde
+          setTimeout(() => {
+            visualizer.removeChild(beatDiv);
+          }, 2000);
         }, interval);
 
         isPlaying = true;
