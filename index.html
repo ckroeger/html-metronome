@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metronom</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script src="/bundle.js" defer></script>
+
+    <div id="metronom">
+      <h1>Metronom</h1>
+      <div class="button-container">
+        <label for="bpm">BPM: </label>
+        <input type="number" id="bpm" value="60" min="0" max="300" />
+
+        <button id="startButton">Start</button>
+        <button id="stopButton">Stopp</button>
+      </div>
+      <div class="button-row">
+        <button class="bpmButton" data="60">60</button>
+        <button class="bpmButton" data="120">120</button>
+        <button class="bpmButton" data="180">180</button>
+        <button class="bpmButton" data="240">240</button>
+        <button class="bpmButton" data="300">300</button>
+        <button class="bpmButton" data="360">360</button>
+      </div>
+    </div>
+
+    <audio id="clickSound" src="clap-2-95736.ogg"></audio>
+
+    <script>
+      const bpmInput = document.getElementById("bpm");
+      const startButton = document.getElementById("startButton");
+      const stopButton = document.getElementById("stopButton");
+      const clickSound = document.getElementById("clickSound");
+
+      let intervalId;
+      let isPlaying = false;
+      let bpm = 60;
+
+      function startClick() {
+        if (isPlaying) return;
+        bpm = parseInt(bpmInput.value, 10);
+        startMetronome(bpm);
+      }
+      function startMetronome(desiredBpm) {
+        if (isPlaying || !desiredBpm) return;
+        console.log("desiredBpm", desiredBpm);
+        bpm = desiredBpm;
+        bpmInput.value = desiredBpm;
+
+        if (bpm <= 0 || bpm > 400) {
+          alert("Bitte geben Sie einen BPM-Wert zwischen 0 und 400 ein.");
+          return;
+        }
+
+        const interval = 60000 / bpm;
+        intervalId = setInterval(() => {
+          clickSound.currentTime = 0;
+          clickSound.play();
+        }, interval);
+
+        isPlaying = true;
+      }
+
+      function stopMetronome() {
+        if (intervalId) {
+          clearInterval(intervalId);
+          isPlaying = false;
+        }
+      }
+
+      startButton.addEventListener("click", startClick);
+      stopButton.addEventListener("click", stopMetronome);
+
+      const bpmButtons = document.querySelectorAll(".bpmButton");
+      bpmButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          stopMetronome();
+          startMetronome(parseInt(button.getAttribute("data"), 10));
+        });
+      });
+    </script>
+  </body>
+</html>
